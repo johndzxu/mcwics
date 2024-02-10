@@ -1,8 +1,6 @@
 from yaspin import yaspin
 from pprint import pprint
 import numpy as np
-import json
-
 
 class TicTacToe:
     def __init__(self):
@@ -42,7 +40,7 @@ class TicTacToe:
         self.current_player = 1
 
 class QLearningAgent:
-    def __init__(self, learning_rate=0.5, discount_factor=0.9, epsilon=0.1, epsilon_decay=1):
+    def __init__(self, learning_rate=0.2, discount_factor=1, epsilon=1, epsilon_decay=0.99):
         self.q_table = {}  # Initialize Q-table
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
@@ -223,6 +221,7 @@ def make_user_move(game):
 
 
 def play(agent, agent_type):
+    agent.epsilon = 0
     game = TicTacToe()
     while True:
         if agent_type == -1:
@@ -246,16 +245,22 @@ def play(agent, agent_type):
 
         game.reset()
 
-
-
+def optimize():
+    for e in np.arange(0.1, 1.0, 0.1):
+        agent = QLearningAgent(epsilon=e)
+        train_agent_x(agent, 100000)
+        print(f"{e}:")
+        win_rate, draw_rate, loss_rate = test_agent_x(agent)
+        print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
+        
 if __name__ == '__main__':
-    agent_o = QLearningAgent()
+    #agent_o = QLearningAgent()
     agent_x = QLearningAgent()
     #qtable = read_qtable_file('qtable.txt')
     #agent.q_table = qtable
 
     #train_agent_o(agent_o)
-    train_agent_x(agent_x, 100000)
+    train_agent_x(agent_x, 300000)
     agent_x.export_qtable()
 
     #print("Agent O:")
@@ -266,4 +271,6 @@ if __name__ == '__main__':
     win_rate, draw_rate, loss_rate = test_agent_x(agent_x)
     print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
 
-    play(agent_x, -1)
+    #play(agent_x, -1)
+
+    #optimize()
