@@ -254,22 +254,21 @@ def optimize():
         print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
         
 if __name__ == '__main__':
-    #agent_o = QLearningAgent()
-    agent_x = QLearningAgent()
-    #qtable = read_qtable_file('qtable.txt')
-    #agent.q_table = qtable
+    agent_o = QLearningAgent()
+    #agent_x = QLearningAgent()
+    #agent_x.import_qtable()
 
-    #train_agent_o(agent_o)
-    train_agent_x(agent_x, 300000)
-    agent_x.export_qtable()
+    train_agent_o(agent_o, 300000)
+    #train_agent_x(agent_x, 300000)
+    agent_o.export_qtable()
 
-    #print("Agent O:")
-    #win_rate, draw_rate, loss_rate = test_agent_o(agent_o)
-    #print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
-
-    print("Agent X:")
-    win_rate, draw_rate, loss_rate = test_agent_x(agent_x)
+    print("Agent O:")
+    win_rate, draw_rate, loss_rate = test_agent_o(agent_o)
     print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
+
+    #print("Agent X:")
+    #win_rate, draw_rate, loss_rate = test_agent_x(agent_x)
+    #print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
 
     #play(agent_x, -1)
 
