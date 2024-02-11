@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from ttt import TicTacToe, QLearningAgent
+from tictactoe import TicTacToe, QLearningAgent
 
 class TicTacToeUI:
     def __init__(self, master):
