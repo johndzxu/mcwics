@@ -1,4 +1,3 @@
-from yaspin import yaspin
 from pprint import pprint
 import numpy as np
 
@@ -23,7 +22,6 @@ class TicTacToe:
         self.make_move(random_action)
 
     def check_winner(self):
-        # Check rows, columns, and diagonals for a win
         for i in range(3):
             if abs(sum(self.board[i, :])) == 3:
                 return self.board[i, 0]
@@ -69,14 +67,13 @@ class QLearningAgent:
         if self.epsilon * self.epsilon_decay > 0.25:
             self.epsilon *= self.epsilon_decay
 
-    def export_qtable(agent):
+    def export_qtable(self):
         with open('qtable', 'w') as file:
-            pprint(agent.q_table, stream=file)
+            pprint(self.q_table, stream=file)
 
-
-    def import_qtable(agent):
-        with open('qtable', 'r') as file:
-            agent.q_table = eval(file.read())
+    def import_qtable(self, qtable_file):
+        with open(qtable_file, 'r') as file:
+            self.q_table = eval(file.read())
 
 def train_agent_o(agent, episodes=10000):
     for episode in range(episodes):
@@ -156,14 +153,10 @@ def test_agent_o(agent, test_episodes=1000):
         
         while True:
             if game.current_player == 1:
-                state = np.copy(game.board)
                 action = agent.choose_action(state, game.available_actions())
                 game.make_move(action)
             else:
-                available_actions = game.available_actions()
-                if available_actions:
-                    random_action = available_actions[np.random.randint(len(available_actions))]
-                    game.make_move(random_action)
+                game.make_random_move()
 
             winner = game.check_winner()
             if winner is not None:
@@ -190,13 +183,42 @@ def test_agent_x(agent, test_episodes=1000):
             if game.current_player == 1:
                 game.make_random_move()
             else:
-                state = np.copy(game.board)
-                action = agent.choose_action(state, game.available_actions())
+                action = agent.choose_action(game.board, game.available_actions())
                 game.make_move(action)
 
             winner = game.check_winner()
             if winner is not None:
                 if winner == -1:
+                    win_count += 1
+                elif winner == 0:
+                    draw_count += 1
+                break
+
+    win_rate = win_count / test_episodes
+    draw_rate = draw_count / test_episodes
+    loss_rate = 1 - (win_rate + draw_rate)
+    return win_rate, draw_rate, loss_rate
+
+def test_agents(agent_o, agent_x, test_episodes=1000):
+    agent_o.epsilon = 0
+    agent_x.epsilon = 0
+    win_count = 0
+    draw_count = 0
+
+    for _ in range(test_episodes):
+        game = TicTacToe()
+        
+        while True:
+            if game.current_player == 1:
+                action = agent_o.choose_action(game.board, game.available_actions())
+                game.make_move(action)
+            else:
+                action = agent_x.choose_action(game.board, game.available_actions())
+                game.make_move(action)
+
+            winner = game.check_winner()
+            if winner is not None:
+                if winner == 1:
                     win_count += 1
                 elif winner == 0:  # Draw
                     draw_count += 1
@@ -206,6 +228,7 @@ def test_agent_x(agent, test_episodes=1000):
     draw_rate = draw_count / test_episodes
     loss_rate = 1 - (win_rate + draw_rate)
     return win_rate, draw_rate, loss_rate
+
 
 def get_user_move():
     user_input = input("Enter the row and column indices separated by a comma (e.g., 1,2): ")
@@ -245,31 +268,21 @@ def play(agent, agent_type):
 
         game.reset()
 
-def optimize():
-    for e in np.arange(0.1, 1.0, 0.1):
-        agent = QLearningAgent(epsilon=e)
-        train_agent_x(agent, 100000)
-        print(f"{e}:")
-        win_rate, draw_rate, loss_rate = test_agent_x(agent)
-        print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
         
 if __name__ == '__main__':
     agent_o = QLearningAgent()
-    #agent_x = QLearningAgent()
-    #agent_x.import_qtable()
+    agent_x = QLearningAgent()
+    agent_o.import_qtable('qtable_o')
+    agent_x.import_qtable('qtable_x')
 
-    train_agent_o(agent_o, 300000)
+    #train_agent_o(agent_o, 300000)
     #train_agent_x(agent_x, 300000)
-    agent_o.export_qtable()
+    #agent_o.export_qtable()
 
     print("Agent O:")
-    win_rate, draw_rate, loss_rate = test_agent_o(agent_o)
+    win_rate, draw_rate, loss_rate = test_agents(agent_o, agent_x)
     print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
 
     #print("Agent X:")
     #win_rate, draw_rate, loss_rate = test_agent_x(agent_x)
     #print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
-
-    #play(agent_x, -1)
-
-    #optimize()
