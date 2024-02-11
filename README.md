@@ -1,3 +1,5 @@
-# A Tic-tac-toe Game
+# Tic-tac-toe
 
-A Tic-tac-toe game created at Hack McWiCS 2024. It implements a Q-learning reinforcement model and plays at a near perfect level.
+Tic-tac-toe with reinforcement learning, made at Hack McWiCS 2024.  
+
+The bot implements a Q-learning model and plays at a near perfect level.
