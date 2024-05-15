@@ -173,8 +173,9 @@ def test_agent_o(agent, test_episodes=1000):
     win_rate = win_count / test_episodes
     draw_rate = draw_count / test_episodes
     loss_rate = 1 - (win_rate + draw_rate)
-    print("O:")
+    print("Agent as O against random:")
     print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
+    print()
 
 def test_agent_x(agent, test_episodes=1000):
     agent.epsilon = 0
@@ -202,8 +203,9 @@ def test_agent_x(agent, test_episodes=1000):
     win_rate = win_count / test_episodes
     draw_rate = draw_count / test_episodes
     loss_rate = 1 - (win_rate + draw_rate)
-    print("X:")
+    print("Agent as X against random:")
     print(f"Win Rate: {win_rate:.2f}, Draw Rate: {draw_rate:.2f}, Loss Rate: {loss_rate:.2f}")
+    print()
 
 def test_agents(agent_o, agent_x, test_episodes=1000):
     agent_o.epsilon = 0
@@ -230,10 +232,12 @@ def test_agents(agent_o, agent_x, test_episodes=1000):
                     draw_count += 1
                 break
 
-    win_rate = win_count / test_episodes
+    win_rate_o = win_count / test_episodes
     draw_rate = draw_count / test_episodes
-    loss_rate = 1 - (win_rate + draw_rate)
-    return win_rate, draw_rate, loss_rate
+    win_rate_x = 1 - (win_rate_o + draw_rate)
+    print("Agent aginst itself:")
+    print(f"Win Rate (O): {win_rate_o:.2f}, Win Rate (X): {win_rate_x:.2f}, Draw Rate: {draw_rate:.2f}")
+    print()
 
 
 def get_user_move():
@@ -276,14 +280,8 @@ def play(agent, agent_type):
 
         
 if __name__ == '__main__':
-    #agent_o = QLearningAgent()
-    #agent_x = QLearningAgent()
-    #agent_o.import_qtable('qtable_o')
-    #agent_x.import_qtable('qtable_x')
-
-    #agent_o.export_qtable()
-
     agent = QLearningAgent()
-    agent.import_qtable('qtable_ult')
+    agent.import_qtable('qtable')
     test_agent_o(agent, 10000)
     test_agent_x(agent, 10000)
+    test_agents(agent, agent, 10000)
